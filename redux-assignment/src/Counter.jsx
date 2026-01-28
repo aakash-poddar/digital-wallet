@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { increment , decrement} from "./action";
+import { increment, decrement } from "./action";
+import History from "./History";
 
 const Counter = () => {
   const [balance, setBalance] = useState(0);
+  const [history, setHistory] = useState([]);
 
   const dispatch = useDispatch();
   const count = useSelector((state) => state.count);
@@ -28,9 +30,12 @@ const Counter = () => {
             onClick={() => {
               if (balance > 0) {
                 dispatch(increment(balance));
+                setHistory((prev) => [
+                  ...prev,
+                  { type: "Deposit", amount: balance },
+                ]);
+
                 setBalance(0);
-              
-                
               }
             }}
           >
@@ -41,14 +46,23 @@ const Counter = () => {
             onClick={() => {
               if (balance > 0 && balance <= count) {
                 dispatch(decrement(balance));
+                setHistory((prev) => [
+                  ...prev,
+                  { type: "Withdraw", amount: balance },
+                ]);
+
                 setBalance(0);
-              }else{
-                alert("Insufficient balance")
+              } else {
+                alert("Insufficient balance");
               }
             }}
           >
             Withdraw
           </button>
+
+          {/* History Section */}
+          <hr />
+          <History history={history} clearHistory={() => setHistory([])} />
         </div>
       </div>
     </div>
